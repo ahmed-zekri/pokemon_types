@@ -13,7 +13,7 @@
         android:theme="@style/Theme.PokemonTypes"
         tools:targetApi="31">
         <activity
-            android:name=".MainActivity"
+            android:name="com.zekri_ahmed.pokemontypes.MainActivity"
             android:exported="true"
             android:theme="@style/Theme.PokemonTypes">
             <intent-filter>

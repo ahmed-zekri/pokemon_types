@@ -4,11 +4,11 @@ plugins {
 }
 
 android {
-    namespace = "com.example.pokemontypes"
+    namespace = "com.zekri_ahmed.pokemontypes"
     compileSdk = 34
 
     defaultConfig {
-        applicationId = "com.example.pokemontypes"
+        applicationId = "com.zekri_ahmed.pokemontypes"
         minSdk = 24
         targetSdk = 34
         versionCode = 1

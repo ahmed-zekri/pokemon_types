@@ -1,4 +1,4 @@
-package com.example.pokemontypes
+package com.zekri_ahmed.pokemontypes
 
 import org.junit.Test
 
