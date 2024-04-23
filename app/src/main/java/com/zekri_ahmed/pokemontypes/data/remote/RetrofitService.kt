@@ -8,7 +8,7 @@ import retrofit2.http.Query
 
 interface RetrofitService {
 
-    @GET("/")
+    @GET("/pokemon")
     suspend fun getAllPokemons(
 
         @Query("offset") offset: Int,
