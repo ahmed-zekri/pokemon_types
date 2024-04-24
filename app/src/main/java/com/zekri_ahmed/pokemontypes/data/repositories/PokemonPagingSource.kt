@@ -13,11 +13,11 @@ class PokemonPagingSource @Inject constructor(private val api: PokemonApi) :
     override suspend fun load(params: LoadParams<Int>): LoadResult<Int, Pokemon> {
 
         return try {
-            val position = params.key ?: 1
-            val response = api.getAllPokemons(position)
+            val position = params.key ?: 0
+            val response = api.getAllPokemons(position * 30)
             LoadResult.Page(
                 data = response.body()?.results ?: listOf(),
-                prevKey = if (position == 1) null else position - 1,
+                prevKey = if (position == 0) null else position - 1,
                 nextKey = position + 1
             )
         } catch (e: Exception) {

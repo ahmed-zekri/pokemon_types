@@ -1,4 +1,4 @@
-package com.zekri_ahmed.pokemontypes.presentation.pokemons_list.components
+package com.zekri_ahmed.pokemontypes.presentation.pokemon_details.components
 
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -25,13 +25,13 @@ import androidx.navigation.NavHostController
 import androidx.paging.compose.collectAsLazyPagingItems
 import com.zekri_ahmed.pokemontypes.data.common.itemsList
 import com.zekri_ahmed.pokemontypes.data.common.pagingLoadStateItem
-import com.zekri_ahmed.pokemontypes.presentation.pokemons_list.PokemonsListViewModel
+import com.zekri_ahmed.pokemontypes.presentation.pokemons_list.PokemonsDetailsViewModel
 
 
 @Composable
-fun ItemsList(
+fun PokemonDetails(
     navHostController: NavHostController,
-    pokemonsListViewModel: PokemonsListViewModel = hiltViewModel()
+    pokemonsDetailsViewModel: PokemonsDetailsViewModel = hiltViewModel()
 ) {
     /*  val coroutineScope = rememberCoroutineScope()
       val hotTypingFlow = remember {
@@ -39,7 +39,7 @@ fun ItemsList(
       }*/
     val items = remember {
         mutableStateOf(
-            pokemonsListViewModel.fetchAllPokemonsListState.value
+            pokemonsDetailsViewModel.fetchAllPokemonsListState.value
         )
     }
 
