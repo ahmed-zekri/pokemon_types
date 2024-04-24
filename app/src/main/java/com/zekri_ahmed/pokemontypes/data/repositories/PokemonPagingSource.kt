@@ -16,7 +16,7 @@ class PokemonPagingSource @Inject constructor(private val api: PokemonApi) :
             val position = params.key ?: 1
             val response = api.getAllPokemons(position)
             LoadResult.Page(
-                data = response.body() ?: listOf(),
+                data = response.body()?.results ?: listOf(),
                 prevKey = if (position == 1) null else position - 1,
                 nextKey = position + 1
             )
