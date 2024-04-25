@@ -74,7 +74,12 @@ fun ItemsList(
                             modifier = Modifier
                                 .fillMaxWidth()
                                 .clickable {
-                                    navHostController.navigate(Screen.PokemonDetails.route)
+                                    item?.url
+                                        ?.split("/")
+                                        ?.let { array ->
+                                            navHostController.navigate(Screen.PokemonDetails(array[array.size - 2]).route)
+
+                                        }
                                 }
                                 .height(50.dp)
 

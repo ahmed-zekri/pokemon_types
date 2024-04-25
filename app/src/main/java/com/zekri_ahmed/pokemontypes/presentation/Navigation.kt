@@ -6,6 +6,7 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import com.zekri_ahmed.pokemontypes.data.common.ID_PARAM
 import com.zekri_ahmed.pokemontypes.presentation.pokemons_list.components.ItemsList
 import com.zekri_ahmed.pokemontypes.presentation.pokemon_details.components.PokemonDetails
 
@@ -19,8 +20,8 @@ fun Navigation() {
 
         }
 
-        composable(route = Screen.PokemonDetails.route) {
-            PokemonDetails(navController)
+        composable(route = Screen.PokemonDetails("{$ID_PARAM}").route) {
+            PokemonDetails()
 
         }
 

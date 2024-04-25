@@ -15,14 +15,12 @@ import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
-import androidx.navigation.NavHostController
 import coil.compose.AsyncImage
 import com.zekri_ahmed.pokemontypes.presentation.pokemon_details.PokemonsDetailsViewModel
 
 
 @Composable
 fun PokemonDetails(
-    navHostController: NavHostController,
     pokemonsDetailsViewModel: PokemonsDetailsViewModel = hiltViewModel()
 ) {
 
@@ -42,33 +40,30 @@ fun PokemonDetails(
                 text = pokemonsDetailsViewModel.fetchPokemonByIdState.value?.name ?: "",
                 fontFamily = FontFamily.Serif, fontSize = 25.sp
             )
-            pokemonsDetailsViewModel.fetchPokemonByIdState.value?.sprites?.frontDefault
-                ?.let { url ->
-                    LazyVerticalGrid(
-                        columns = GridCells.Adaptive(minSize = 150.dp)
-                    ) {
-                        items(4) {
-                            when (it) {
-                                0 -> pokemonsDetailsViewModel.fetchPokemonByIdState.value?.sprites?.backDefault
-                                1 -> pokemonsDetailsViewModel.fetchPokemonByIdState.value?.sprites?.frontDefault
-                                2 -> pokemonsDetailsViewModel.fetchPokemonByIdState.value?.sprites?.backShiny
-                                else -> pokemonsDetailsViewModel.fetchPokemonByIdState.value?.sprites?.frontShiny
 
-                            }?.let { url ->
-                                AsyncImage(
-                                    modifier = Modifier.height(250.dp),
-                                    model = url,
-                                    contentDescription = url
-                                )
-                            }
+            LazyVerticalGrid(
+                columns = GridCells.Adaptive(minSize = 150.dp)
+            ) {
+                items(4) {
+                    when (it) {
+                        0 -> pokemonsDetailsViewModel.fetchPokemonByIdState.value?.sprites?.backDefault
+                        1 -> pokemonsDetailsViewModel.fetchPokemonByIdState.value?.sprites?.frontDefault
+                        2 -> pokemonsDetailsViewModel.fetchPokemonByIdState.value?.sprites?.backShiny
+                        else -> pokemonsDetailsViewModel.fetchPokemonByIdState.value?.sprites?.frontShiny
 
-
-                        }
-
+                    }?.let { url ->
+                        AsyncImage(
+                            modifier = Modifier.height(250.dp),
+                            model = url,
+                            contentDescription = url
+                        )
                     }
 
 
                 }
+
+
+            }
 
 
         }
