@@ -19,6 +19,7 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -148,19 +149,24 @@ fun ItemsList(
                         }
                     else
                     // Fetch Pokemon Per type
-                        LazyColumn {
+                    {
+                        LaunchedEffect(key1 = pokemonsType.value) {
                             pokemonsListViewModel.getPokemonsByType(pokemonsType.value)
+
+                        }
+                        LazyColumn {
+
                             pokemonsListViewModel.fetchPokemonsByTypeState.value.pokemonPerTypeData?.let { list ->
                                 items(list.size) {
                                     PokemonRow(pokemon = list[it], navHostController)
 
 
                                 }
-
-
                             }
 
                         }
+
+                    }
 
                 }
             }
