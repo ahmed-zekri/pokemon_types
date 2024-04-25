@@ -13,9 +13,12 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.SpanStyle
+import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.withStyle
@@ -25,8 +28,11 @@ import androidx.navigation.NavHostController
 import androidx.paging.compose.collectAsLazyPagingItems
 import com.zekri_ahmed.pokemontypes.data.common.itemsList
 import com.zekri_ahmed.pokemontypes.data.common.pagingLoadStateItem
+import com.zekri_ahmed.pokemontypes.presentation.InputTextField
 import com.zekri_ahmed.pokemontypes.presentation.Screen
 import com.zekri_ahmed.pokemontypes.presentation.pokemons_list.PokemonsListViewModel
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.launch
 
 
 @Composable
@@ -34,10 +40,10 @@ fun ItemsList(
     navHostController: NavHostController,
     pokemonsListViewModel: PokemonsListViewModel = hiltViewModel()
 ) {
-    /*  val coroutineScope = rememberCoroutineScope()
-      val hotTypingFlow = remember {
-          MutableStateFlow("")
-      }*/
+    val coroutineScope = rememberCoroutineScope()
+    val hotTypingFlow = remember {
+        MutableStateFlow("")
+    }
     val items = remember {
         mutableStateOf(
             pokemonsListViewModel.fetchAllPokemonsListState.value
@@ -52,19 +58,19 @@ fun ItemsList(
 
 
         Column(modifier = Modifier.fillMaxSize(), verticalArrangement = Arrangement.Center) {
-            /* InputTextField(
-                 spacer = 2.dp,
-                 labelText = "",
-                 dividerColor = Color.Black,
-                 textStyle = TextStyle.Default
+            InputTextField(
+                spacer = 2.dp,
+                labelText = "",
+                dividerColor = Color.Black,
+                textStyle = TextStyle.Default
 
-             ) {
-                 coroutineScope.launch {
-                     if (this@InputTextField.isNotBlank())
-                         hotTypingFlow.emit(this@InputTextField)
-                 }
+            ) {
+                coroutineScope.launch {
+                    if (this@InputTextField.isNotBlank())
+                        hotTypingFlow.emit(this@InputTextField)
+                }
 
-             }*/
+            }
             items.value?.collectAsLazyPagingItems()?.let { lazyPagingItems ->
                 LazyColumn {
 
