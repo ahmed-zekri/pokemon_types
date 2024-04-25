@@ -1,6 +1,6 @@
 package com.zekri_ahmed.pokemontypes.data.di
 
-import com.zekri_ahmed.pokemontypes.data.common.BASE_URL
+import com.zekri_ahmed.pokemontypes.common.BASE_URL
 import com.zekri_ahmed.pokemontypes.data.remote.PokemonApi
 import dagger.Module
 import dagger.Provides

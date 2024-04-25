@@ -76,6 +76,8 @@ dependencies {
     implementation("androidx.paging:paging-compose:3.3.0-beta01")
     implementation("io.coil-kt:coil-compose:2.6.0")
     testImplementation(libs.junit)
+    testImplementation("io.mockk:mockk:1.13.10")
+    testImplementation("org.mockito.kotlin:mockito-kotlin:5.3.1")
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
     androidTestImplementation(platform(libs.androidx.compose.bom))

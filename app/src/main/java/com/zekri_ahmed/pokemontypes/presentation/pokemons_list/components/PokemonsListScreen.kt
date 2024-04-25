@@ -1,6 +1,7 @@
 package com.zekri_ahmed.pokemontypes.presentation.pokemons_list.components
 
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -24,6 +25,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
@@ -31,8 +33,8 @@ import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
 import androidx.paging.compose.collectAsLazyPagingItems
-import com.zekri_ahmed.pokemontypes.data.common.itemsList
-import com.zekri_ahmed.pokemontypes.data.common.pagingLoadStateItem
+import com.zekri_ahmed.pokemontypes.common.itemsList
+import com.zekri_ahmed.pokemontypes.common.pagingLoadStateItem
 import com.zekri_ahmed.pokemontypes.presentation.pokemons_list.PokemonsListViewModel
 
 
@@ -45,21 +47,13 @@ fun ItemsList(
         mutableStateOf("AllTypes")
     }
     var expanded by remember { mutableStateOf(false) }
-    val items = remember {
-        mutableStateOf(
-            pokemonsListViewModel.fetchAllPokemonsListState.value
-        )
-    }
 
 
+    Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
 
 
-
-    Column(Modifier.fillMaxSize()) {
-
-
-        Column(modifier = Modifier.fillMaxSize(), verticalArrangement = Arrangement.Center) {
-
+        Column(Modifier.fillMaxSize()) {
+            //Get all pokemons types
             Row(
                 modifier = Modifier.fillMaxWidth(),
                 horizontalArrangement = Arrangement.SpaceBetween,
@@ -92,13 +86,14 @@ fun ItemsList(
                         pokemonsType.value = "AllTypes"
                         expanded = false
                     })
-                    pokemonsListViewModel.fetchAllPokemonsTypesState.value?.let { pokemonTypes ->
+                    pokemonsListViewModel.fetchAllPokemonsTypesState.value.pokemonTypeData?.let { pokemonTypes ->
                         pokemonTypes.forEach {
                             DropdownMenuItem(text = {
                                 Text(
                                     text = it.name,
                                     fontSize = 20.sp,
-                                    fontFamily = FontFamily.Monospace, fontWeight = FontWeight.Bold
+                                    fontFamily = FontFamily.Monospace,
+                                    fontWeight = FontWeight.Bold
                                 )
                                 Spacer(modifier = Modifier.width(75.dp))
                             }, onClick = {
@@ -112,51 +107,72 @@ fun ItemsList(
 
 
             }
-            if (pokemonsType.value == "AllTypes") items.value?.collectAsLazyPagingItems()
-                ?.let { lazyPagingItems ->
-                    LazyColumn {
 
-                        itemsList(lazyPagingItems) { item ->
-                            item?.let {
-                                PokemonRow(it, navHostController)
+
+            // Fetch All Pokemons
+            pokemonsListViewModel.fetchAllPokemonsListState.value.pokemonListData?.let { items ->
+
+                Column(
+                    modifier = Modifier.fillMaxSize(),
+                    verticalArrangement = Arrangement.Center
+                ) {
+
+
+                    if (pokemonsType.value == "AllTypes") items.collectAsLazyPagingItems()
+                        .let { lazyPagingItems ->
+                            LazyColumn {
+
+                                itemsList(lazyPagingItems) { item ->
+                                    item?.let {
+                                        PokemonRow(it, navHostController)
+                                    }
+
+
+                                }
+
+                                pagingLoadStateItem(
+                                    loadState = lazyPagingItems.loadState.append,
+                                    keySuffix = "append",
+                                    loading = {
+                                        Column(modifier = Modifier.fillMaxWidth()) {
+                                            CircularProgressIndicator(Modifier.align(Alignment.CenterHorizontally))
+                                        }
+                                    },
+                                    error = {
+
+                                    },
+                                )
                             }
 
 
                         }
+                    else
+                    // Fetch Pokemon Per type
+                        LazyColumn {
+                            pokemonsListViewModel.getPokemonsByType(pokemonsType.value)
+                            pokemonsListViewModel.fetchPokemonsByTypeState.value.pokemonPerTypeData?.let { list ->
+                                items(list.size) {
+                                    PokemonRow(pokemon = list[it], navHostController)
 
-                        pagingLoadStateItem(
-                            loadState = lazyPagingItems.loadState.append,
-                            keySuffix = "append",
-                            loading = {
-                                Column(modifier = Modifier.fillMaxWidth()) {
-                                    CircularProgressIndicator(Modifier.align(Alignment.CenterHorizontally))
+
                                 }
-                            },
-                            error = {
 
-                            },
-                        )
-                    }
 
+                            }
+
+                        }
 
                 }
-            else LazyColumn {
-                pokemonsListViewModel.getPokemonsByType(pokemonsType.value)
-                pokemonsListViewModel.fetchPokemonsByTypeState.value?.let { list ->
-                    items(list.size) {
-                        PokemonRow(pokemon = list[it], navHostController)
-
-
-                    }
-
-
-                }
-
             }
 
-
         }
+//Loading screen
+        if (pokemonsListViewModel.fetchAllPokemonsListState.value.loading)
+            CircularProgressIndicator(
+                modifier = Modifier.align(Alignment.Center),
+                color = Color.Black
+            )
+
 
     }
-
 }

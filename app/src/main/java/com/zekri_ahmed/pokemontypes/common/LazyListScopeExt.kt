@@ -1,4 +1,4 @@
-package com.zekri_ahmed.pokemontypes.data.common
+package com.zekri_ahmed.pokemontypes.common
 
 import android.annotation.SuppressLint
 import android.os.Parcel

@@ -5,11 +5,13 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.zekri_ahmed.pokemontypes.data.common.ID_PARAM
-import com.zekri_ahmed.pokemontypes.data.dto.PokemonInfo
+import com.zekri_ahmed.pokemontypes.common.ID_PARAM
+import com.zekri_ahmed.pokemontypes.common.Resources
 import com.zekri_ahmed.pokemontypes.domain.use_cases.FetchPokemonById
+import com.zekri_ahmed.pokemontypes.presentation.pokemon_details.components.PokemonPerIdState
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.launch
+import kotlinx.coroutines.flow.launchIn
+import kotlinx.coroutines.flow.onEach
 import javax.inject.Inject
 
 @HiltViewModel
@@ -19,21 +21,30 @@ class PokemonsDetailsViewModel @Inject constructor(
 ) :
     ViewModel() {
     private val id = savedStateHandle.get<String>(ID_PARAM)
-    private val _fetchPokemonById = mutableStateOf<PokemonInfo?>(null)
-    val fetchPokemonByIdState: State<PokemonInfo?> = _fetchPokemonById
-init {
-    getPokemonById()
-}
+    private val _fetchPokemonById = mutableStateOf(PokemonPerIdState(loading = true))
+    val fetchPokemonByIdState: State<PokemonPerIdState> = _fetchPokemonById
+
+    init {
+        getPokemonById()
+    }
 
     private fun getPokemonById() {
-        viewModelScope.launch {
+
             id?.let {
-                fetchPokemonById(id).collect {
-                    _fetchPokemonById.value = it
+                fetchPokemonById(id).onEach {
+                    when (it) {
+                        is Resources.Success -> _fetchPokemonById.value =
+                            PokemonPerIdState(pokemonPerIdData = it.data)
+
+                        is Resources.Loading -> _fetchPokemonById.value = PokemonPerIdState(true)
+                        is Resources.Error -> _fetchPokemonById.value =
+                            PokemonPerIdState(error = it.message)
+
+                    }
 
 
-                }
-            }
+
+            }.launchIn(viewModelScope)
 
         }
     }
