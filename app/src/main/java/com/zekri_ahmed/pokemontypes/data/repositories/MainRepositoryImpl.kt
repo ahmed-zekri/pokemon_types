@@ -4,6 +4,7 @@ import androidx.paging.Pager
 import androidx.paging.PagingConfig
 import androidx.paging.PagingData
 import com.zekri_ahmed.pokemontypes.data.dto.Pokemon
+import com.zekri_ahmed.pokemontypes.data.dto.PokemonByTypeResults
 import com.zekri_ahmed.pokemontypes.data.dto.PokemonTypeResults
 import com.zekri_ahmed.pokemontypes.data.remote.PokemonApi
 import com.zekri_ahmed.pokemontypes.domain.repositories.MainRepository
@@ -33,6 +34,10 @@ class MainRepositoryImpl @Inject constructor(
 
     override suspend fun getPokemonById(id: String) =
         pokemonApi.getPokemonById(id)
+
+    override suspend fun getPokemonByType(type: String): Response<PokemonByTypeResults>
+    = pokemonApi.getPokemonByType(type)
+
 
     override suspend fun getPokemonTypes(): Response<PokemonTypeResults> =
         pokemonApi.getPokemonTypes()

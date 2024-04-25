@@ -1,18 +1,16 @@
 package com.zekri_ahmed.pokemontypes.presentation.pokemons_list.components
 
-import android.widget.Toast
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.wrapContentSize
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.MoreVert
-import androidx.compose.material3.Card
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
@@ -26,18 +24,15 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.text.SpanStyle
-import androidx.compose.ui.text.buildAnnotatedString
+import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
 import androidx.paging.compose.collectAsLazyPagingItems
 import com.zekri_ahmed.pokemontypes.data.common.itemsList
 import com.zekri_ahmed.pokemontypes.data.common.pagingLoadStateItem
-import com.zekri_ahmed.pokemontypes.presentation.Screen
 import com.zekri_ahmed.pokemontypes.presentation.pokemons_list.PokemonsListViewModel
 
 
@@ -46,8 +41,7 @@ fun ItemsList(
     navHostController: NavHostController,
     pokemonsListViewModel: PokemonsListViewModel = hiltViewModel()
 ) {
-    val context = LocalContext.current
-    val pokemonsType by remember {
+    val pokemonsType = remember {
         mutableStateOf("AllTypes")
     }
     var expanded by remember { mutableStateOf(false) }
@@ -65,33 +59,52 @@ fun ItemsList(
 
 
         Column(modifier = Modifier.fillMaxSize(), verticalArrangement = Arrangement.Center) {
-            Box(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .wrapContentSize(Alignment.TopEnd)
+
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.SpaceBetween,
+                verticalAlignment = Alignment.CenterVertically
             ) {
+                Text(
+                    text = pokemonsType.value,
+                    modifier = Modifier.padding(start = 15.dp),
+                    fontWeight = FontWeight.Bold,
+                    fontFamily = FontFamily.Serif,
+                    fontSize = 20.sp
+                )
                 IconButton(onClick = { expanded = !expanded }) {
+
                     Icon(
-                        imageVector = Icons.Default.MoreVert,
-                        contentDescription = "More"
+                        imageVector = Icons.Default.MoreVert, contentDescription = "More"
                     )
                 }
-                DropdownMenu(
-                    expanded = expanded,
-                    onDismissRequest = { expanded = false }
-                ) {
-                    DropdownMenuItem(
-                        text = { Text("AllTypes") },
-                        onClick = { Toast.makeText(context, "Load", Toast.LENGTH_SHORT).show() }
-                    )
+                DropdownMenu(expanded = expanded,
+                    modifier = Modifier.fillMaxWidth(),
+                    onDismissRequest = { expanded = false }) {
+                    DropdownMenuItem(text = {
+                        Text(
+                            text = "AllTypes",
+                            fontSize = 20.sp,
+                            fontFamily = FontFamily.Monospace, fontWeight = FontWeight.Bold
+                        )
+                        Spacer(modifier = Modifier.width(75.dp))
+                    }, onClick = {
+                        pokemonsType.value = "AllTypes"
+                        expanded = false
+                    })
                     pokemonsListViewModel.fetchAllPokemonsTypesState.value?.let { pokemonTypes ->
                         pokemonTypes.forEach {
-                            DropdownMenuItem(
-                                text = { Text(it.name) },
-                                onClick = {
-                                    Toast.makeText(context, "Save", Toast.LENGTH_SHORT).show()
-                                }
-                            )
+                            DropdownMenuItem(text = {
+                                Text(
+                                    text = it.name,
+                                    fontSize = 20.sp,
+                                    fontFamily = FontFamily.Monospace, fontWeight = FontWeight.Bold
+                                )
+                                Spacer(modifier = Modifier.width(75.dp))
+                            }, onClick = {
+                                pokemonsType.value = it.name
+                                expanded = false
+                            })
                         }
                     }
 
@@ -99,66 +112,45 @@ fun ItemsList(
 
 
             }
+            if (pokemonsType.value == "AllTypes") items.value?.collectAsLazyPagingItems()
+                ?.let { lazyPagingItems ->
+                    LazyColumn {
 
-            items.value?.collectAsLazyPagingItems()?.let { lazyPagingItems ->
-                LazyColumn {
-
-                    itemsList(lazyPagingItems) { item ->
-
-                        Card(
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .clickable {
-                                    item?.url
-                                        ?.split("/")
-                                        ?.let { array ->
-                                            navHostController.navigate(Screen.PokemonDetails(array[array.size - 2]).route)
-
-                                        }
-                                }
-                                .height(50.dp)
-
-
-                        ) {
-                            Column(
-                                modifier = Modifier.fillMaxSize(),
-                                verticalArrangement = Arrangement.Center
-
-                            ) {
-                                Text(
-                                    buildAnnotatedString {
-                                        append(
-                                            "Pokemon : ${
-                                                item?.url?.split("/")
-                                                    ?.get(item.url.split("/").size - 2)
-                                            }"
-                                        )
-                                        withStyle(style = SpanStyle(fontWeight = FontWeight.W900)) {
-                                            append(item?.name)
-                                        }
-
-                                    }
-                                )
+                        itemsList(lazyPagingItems) { item ->
+                            item?.let {
+                                PokemonRow(it, navHostController)
                             }
 
 
                         }
+
+                        pagingLoadStateItem(
+                            loadState = lazyPagingItems.loadState.append,
+                            keySuffix = "append",
+                            loading = {
+                                Column(modifier = Modifier.fillMaxWidth()) {
+                                    CircularProgressIndicator(Modifier.align(Alignment.CenterHorizontally))
+                                }
+                            },
+                            error = {
+
+                            },
+                        )
                     }
 
-                    pagingLoadStateItem(
-                        loadState = lazyPagingItems.loadState.append,
-                        keySuffix = "append",
-                        loading = {
-                            Column(modifier = Modifier.fillMaxWidth()) {
-                                CircularProgressIndicator(Modifier.align(Alignment.CenterHorizontally))
-                            }
-                        },
-                        error = {
 
-                        },
-                    )
                 }
+            else LazyColumn {
+                pokemonsListViewModel.getPokemonsByType(pokemonsType.value)
+                pokemonsListViewModel.fetchPokemonsByTypeState.value?.let { list ->
+                    items(list.size) {
+                        PokemonRow(pokemon = list[it], navHostController)
 
+
+                    }
+
+
+                }
 
             }
 

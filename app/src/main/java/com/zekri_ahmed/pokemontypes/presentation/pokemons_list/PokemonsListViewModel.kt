@@ -7,6 +7,7 @@ import androidx.lifecycle.viewModelScope
 import androidx.paging.PagingData
 import com.zekri_ahmed.pokemontypes.data.dto.Pokemon
 import com.zekri_ahmed.pokemontypes.data.dto.PokemonType
+import com.zekri_ahmed.pokemontypes.domain.use_cases.FetchPokemonByType
 import com.zekri_ahmed.pokemontypes.domain.use_cases.FetchPokemons
 import com.zekri_ahmed.pokemontypes.domain.use_cases.FetchPokemonsTypes
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -17,7 +18,8 @@ import javax.inject.Inject
 @HiltViewModel
 class PokemonsListViewModel @Inject constructor(
     private val fetchPokemons: FetchPokemons,
-    private val fetchPokemonsTypes: FetchPokemonsTypes
+    private val fetchPokemonsTypes: FetchPokemonsTypes,
+    private val fetchPokemonByType: FetchPokemonByType
 ) :
     ViewModel() {
 
@@ -26,6 +28,9 @@ class PokemonsListViewModel @Inject constructor(
 
     private val _fetchAllTypes = mutableStateOf<List<PokemonType>?>(null)
     val fetchAllPokemonsTypesState: State<List<PokemonType>?> = _fetchAllTypes
+
+    private val _fetchByType = mutableStateOf<List<Pokemon>?>(null)
+    val fetchPokemonsByTypeState: State<List<Pokemon>?> = _fetchByType
 
 
     init {
@@ -37,6 +42,15 @@ class PokemonsListViewModel @Inject constructor(
         viewModelScope.launch {
             fetchPokemonsTypes().collect {
                 _fetchAllTypes.value = it
+            }
+        }
+    }
+
+    fun getPokemonsByType(type: String) {
+
+        viewModelScope.launch {
+            fetchPokemonByType(type).collect {
+                _fetchByType.value = it
             }
         }
 
