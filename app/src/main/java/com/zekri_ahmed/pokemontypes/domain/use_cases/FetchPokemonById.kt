@@ -8,7 +8,7 @@ import kotlinx.coroutines.flow.flow
 import javax.inject.Inject
 
 
-class FetchPokemonById @Inject constructor(val mainRepository: MainRepository) {
+class FetchPokemonById @Inject constructor(private val mainRepository: MainRepository) {
 
     operator fun invoke(id: String): Flow<Resources<PokemonInfo>> =
         flow {
