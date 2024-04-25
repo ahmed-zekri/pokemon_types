@@ -1,4 +1,4 @@
-package com.zekri_ahmed.pokemontypes.presentation.pokemon_details.components
+package com.zekri_ahmed.pokemontypes.presentation.pokemons_list.components
 
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -25,13 +25,14 @@ import androidx.navigation.NavHostController
 import androidx.paging.compose.collectAsLazyPagingItems
 import com.zekri_ahmed.pokemontypes.data.common.itemsList
 import com.zekri_ahmed.pokemontypes.data.common.pagingLoadStateItem
-import com.zekri_ahmed.pokemontypes.presentation.pokemons_list.PokemonsDetailsViewModel
+import com.zekri_ahmed.pokemontypes.presentation.Screen
+import com.zekri_ahmed.pokemontypes.presentation.pokemons_list.PokemonsListViewModel
 
 
 @Composable
-fun PokemonDetails(
+fun ItemsList(
     navHostController: NavHostController,
-    pokemonsDetailsViewModel: PokemonsDetailsViewModel = hiltViewModel()
+    pokemonsListViewModel: PokemonsListViewModel = hiltViewModel()
 ) {
     /*  val coroutineScope = rememberCoroutineScope()
       val hotTypingFlow = remember {
@@ -39,7 +40,7 @@ fun PokemonDetails(
       }*/
     val items = remember {
         mutableStateOf(
-            pokemonsDetailsViewModel.fetchAllPokemonsListState.value
+            pokemonsListViewModel.fetchAllPokemonsListState.value
         )
     }
 
@@ -72,7 +73,9 @@ fun PokemonDetails(
                         Card(
                             modifier = Modifier
                                 .fillMaxWidth()
-                                .clickable { }
+                                .clickable {
+                                    navHostController.navigate(Screen.PokemonDetails.route)
+                                }
                                 .height(50.dp)
 
 
