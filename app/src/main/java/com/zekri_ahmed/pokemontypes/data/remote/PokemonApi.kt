@@ -2,6 +2,7 @@ package com.zekri_ahmed.pokemontypes.data.remote
 
 import com.zekri_ahmed.pokemontypes.data.dto.PokemonInfo
 import com.zekri_ahmed.pokemontypes.data.dto.PokemonResults
+import com.zekri_ahmed.pokemontypes.data.dto.PokemonTypeResults
 import retrofit2.Response
 import retrofit2.http.GET
 import retrofit2.http.Path
@@ -22,5 +23,9 @@ interface PokemonApi {
         @Path(value = "id")
         id: String
     ): Response<PokemonInfo>
+
+    @GET("type")
+    suspend fun getPokemonTypes(
+    ): Response<PokemonTypeResults>
 
 }

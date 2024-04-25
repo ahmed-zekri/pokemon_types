@@ -4,9 +4,11 @@ import androidx.paging.Pager
 import androidx.paging.PagingConfig
 import androidx.paging.PagingData
 import com.zekri_ahmed.pokemontypes.data.dto.Pokemon
+import com.zekri_ahmed.pokemontypes.data.dto.PokemonTypeResults
 import com.zekri_ahmed.pokemontypes.data.remote.PokemonApi
 import com.zekri_ahmed.pokemontypes.domain.repositories.MainRepository
 import kotlinx.coroutines.flow.Flow
+import retrofit2.Response
 import javax.inject.Inject
 
 class MainRepositoryImpl @Inject constructor(
@@ -31,4 +33,7 @@ class MainRepositoryImpl @Inject constructor(
 
     override suspend fun getPokemonById(id: String) =
         pokemonApi.getPokemonById(id)
+
+    override suspend fun getPokemonTypes(): Response<PokemonTypeResults> =
+        pokemonApi.getPokemonTypes()
 }
