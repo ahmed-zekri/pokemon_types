@@ -24,7 +24,7 @@ import retrofit2.Response
  *
  * See [testing documentation](http://d.android.com/tools/testing).
  */
-class fetchPokemonsTest {
+class FetchPokemonsTest {
     private lateinit var repository: MainRepository
     private lateinit var fetchPokemonByType: FetchPokemonByType
     private lateinit var fetchPokemonById: FetchPokemonById
@@ -56,7 +56,7 @@ class fetchPokemonsTest {
             if (calls == 0)
                 assert(it is Resources.Loading)
             else
-                assert(it is Resources.Success && it.data == pokemonData.map { it.pokemon })
+                assert(it is Resources.Success && it.data == pokemonData.map {item-> item.pokemon })
             calls++
 
         }
