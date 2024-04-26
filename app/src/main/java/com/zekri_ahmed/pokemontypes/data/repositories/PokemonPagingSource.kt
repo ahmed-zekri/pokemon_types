@@ -26,11 +26,8 @@ class PokemonPagingSource @Inject constructor(private val api: PokemonApi) :
 
     }
 
-    override fun getRefreshKey(state: PagingState<Int, Pokemon>): Int? {
-        return state.anchorPosition?.let { anchorPosition ->
-            state.closestPageToPosition(anchorPosition)?.prevKey?.plus(1)
-                ?: state.closestPageToPosition(anchorPosition)?.nextKey?.minus(1)
-        }
-    }
+    override fun getRefreshKey(state: PagingState<Int, Pokemon>) =
+        state.anchorPosition
+
 
 }

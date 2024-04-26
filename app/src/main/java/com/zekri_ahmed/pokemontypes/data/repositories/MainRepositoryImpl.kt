@@ -23,12 +23,11 @@ class MainRepositoryImpl @Inject constructor(
         return Pager(
             config = PagingConfig(
                 pageSize = 30,
-                enablePlaceholders = false,
                 initialLoadSize = 2
             ),
             pagingSourceFactory = {
                 pokemonPagingSource
-            }, initialKey = 1
+            }, initialKey = 0
         ).flow
     }
 

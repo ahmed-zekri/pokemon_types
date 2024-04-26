@@ -1,6 +1,7 @@
 package com.zekri_ahmed.pokemontypes.presentation.pokemons_list.components
 
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Arrangement.Absolute.Center
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -8,6 +9,7 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material.icons.Icons
@@ -33,9 +35,8 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
+import androidx.paging.LoadState
 import androidx.paging.compose.collectAsLazyPagingItems
-import com.zekri_ahmed.pokemontypes.common.itemsList
-import com.zekri_ahmed.pokemontypes.common.pagingLoadStateItem
 import com.zekri_ahmed.pokemontypes.presentation.pokemons_list.PokemonsListViewModel
 
 
@@ -123,26 +124,65 @@ fun ItemsList(
                         .let { lazyPagingItems ->
                             LazyColumn {
 
-                                itemsList(lazyPagingItems) { item ->
-                                    item?.let {
-                                        PokemonRow(it, navHostController)
-                                    }
-
-
+                                items(lazyPagingItems.itemCount) { index ->
+                                    PokemonRow(
+                                        pokemon = lazyPagingItems[index]!!,
+                                        navHostController = navHostController
+                                    )
                                 }
 
-                                pagingLoadStateItem(
-                                    loadState = lazyPagingItems.loadState.append,
-                                    keySuffix = "append",
-                                    loading = {
-                                        Column(modifier = Modifier.fillMaxWidth()) {
-                                            CircularProgressIndicator(Modifier.align(Alignment.CenterHorizontally))
+                                lazyPagingItems.apply {
+                                    when {
+                                        loadState.refresh is LoadState.Loading -> {
+                                            item {
+                                                CircularProgressIndicator(
+                                                    modifier = Modifier
+                                                        .fillParentMaxSize()
+                                                        .size(50.dp)
+                                                )
+                                            }
                                         }
-                                    },
-                                    error = {
 
-                                    },
-                                )
+                                        loadState.refresh is LoadState.Error -> {
+                                            val error =
+                                                lazyPagingItems.loadState.refresh as LoadState.Error
+                                            item {
+                                                Row(
+                                                    modifier = Modifier.fillMaxSize(),
+                                                    horizontalArrangement = Center
+                                                ) {
+
+                                                }
+                                                ErrorMessageLoading(error = error.error.localizedMessage) {
+                                                    retry()
+                                                }
+                                            }
+                                        }
+
+
+                                        loadState.append is LoadState.Loading -> {
+                                            item {
+                                                CircularProgressIndicator(
+                                                    modifier = Modifier
+                                                        .align(
+                                                            Alignment.CenterHorizontally
+                                                        )
+                                                        .size(50.dp)
+                                                )
+                                            }
+                                        }
+
+                                        loadState.append is LoadState.Error -> {
+                                            val error =
+                                                lazyPagingItems.loadState.append as LoadState.Error
+                                            item {
+                                                ErrorMessageLoading(error = error.error.localizedMessage) {
+                                                    retry()
+                                                }
+                                            }
+                                        }
+                                    }
+                                }
                             }
 
 
@@ -175,7 +215,9 @@ fun ItemsList(
 //Loading screen
         if (pokemonsListViewModel.fetchAllPokemonsListState.value.loading)
             CircularProgressIndicator(
-                modifier = Modifier.align(Alignment.Center),
+                modifier = Modifier
+                    .align(Alignment.Center)
+                    .size(50.dp),
                 color = Color.Black
             )
 
